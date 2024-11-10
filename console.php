@@ -25,6 +25,16 @@ class DevTest
 
     public function execute(): void
     {
+        if (!$this->isValidAction($this->action)) {
+            echo "Invalid action. Allowed actions are: plus, minus, multiply, division.\n";
+            exit;
+        }
+
+        if (!file_exists($this->file)) {
+            echo "File not found: {$this->file}\n";
+            exit;
+        }
+
         $this->processFile();
         $this->saveResult();
         $this->saveLog();
@@ -69,11 +79,21 @@ class DevTest
             file_put_contents($this->logFile, implode("\r\n", $this->logs) . "\r\n");
         }
     }
+
+    private function isValidAction(string $action): bool
+    {
+        return in_array($action, ['plus', 'minus', 'multiply', 'division']);
+    }
 }
 
 $options = getopt('', ['action:', 'file:']);
-$action = $options['action'];
-$file = $options['file'];
+$action = $options['action'] ?? null;
+$file = $options['file'] ?? null;
+
+if (!$action || !$file) {
+    echo "Usage: php console.php --action {action} --file {file}\n";
+    exit;
+}
 
 $devTest = new DevTest($action, $file);
 $devTest->execute();
