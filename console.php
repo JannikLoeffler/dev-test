@@ -26,20 +26,20 @@ if(isset($options['f'])) {
 
 try {
     if ($action == "plus") {
-        include 'files/ClassOne.php';
-        $classOne = new ClassOne($file);
+        include 'Classes/Addition.php';
+        $classOne = new Addition($file);
     } elseif ($action == "minus") {
-        include 'files/ClassTwo.php';
-        $classTwo = new ClassTwo($file, "minus");
+        include 'Classes/Subtraction.php';
+        $classTwo = new Subtraction($file, "minus");
         $classTwo->start();
     } elseif ($action == "multiply") {
-        include 'files/Classthree.php';
-        $classThree = new Classthree();
+        include 'Classes/Multiplication.php';
+        $classThree = new Multiplication();
         $classThree->setFile($file);
         $classThree->execute();
     } elseif ($action == "division") {
-        include 'files/classFour.php';
-        $classFouyr = new classFour($file);
+        include 'Classes/Division.php';
+        $classFouyr = new Division($file);
     } else {
         throw new \Exception("Wrong action is selected");
     }

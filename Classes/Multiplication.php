@@ -1,7 +1,7 @@
 <?php
-// here we will make multiplication
-class Classthree {
-
+// code for multiplication
+class Multiplication 
+{
     private $file = null;
     private $resultHandler;
     private $logHandler;

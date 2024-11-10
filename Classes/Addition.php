@@ -1,8 +1,8 @@
 <?php
-// we will count sum here
-class ClassOne
+// code for addition
+class Addition
 {
-    function __construct($file)
+    public function __construct($file)
     {
         $this->start();
         $fp = fopen($file, "r");

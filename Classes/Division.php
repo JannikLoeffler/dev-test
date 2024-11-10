@@ -1,7 +1,7 @@
 <?php
-// here we will make division
-class classFour{
-
+// code for division
+class Division
+{
     public function __construct($file)
     {
         if(file_exists("log.txt")) {

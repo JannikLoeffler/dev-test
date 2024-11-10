@@ -1,6 +1,6 @@
 <?php
-//here we will get minus
-class ClassTwo
+// code for subtraction
+class Subtraction
 {
     private $file;
     private $action;
