@@ -70,12 +70,14 @@ class DevTest
 
     private function saveResult(): void
     {
+        $this->ensureDirectoryExists(dirname($this->resultFile));
         file_put_contents($this->resultFile, implode("\r\n", $this->results) . "\r\n");
     }
 
     private function saveLog(): void
     {
         if (!empty($this->logs)) {
+            $this->ensureDirectoryExists(dirname($this->logFile));
             file_put_contents($this->logFile, implode("\r\n", $this->logs) . "\r\n");
         }
     }
@@ -83,6 +85,13 @@ class DevTest
     private function isValidAction(string $action): bool
     {
         return in_array($action, ['plus', 'minus', 'multiply', 'division']);
+    }
+
+    private function ensureDirectoryExists(string $directory): void
+    {
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
     }
 }
 
