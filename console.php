@@ -1,46 +1,71 @@
 <?php
 
-$shortopts = "a:f:";
-$longopts  = array(
-    "action:",
-    "file:",
-);
+class DevTest
+{
+    private string $action;
+    private string $file;
+    private string $logFile = 'log.txt';
+    private string $resultFile = 'result.csv';
+    private array $results = [];
+    private array $logs = [];
 
-$options = getopt($shortopts, $longopts);
-
-if(isset($options['a'])) {
-    $action = $options['a'];
-} elseif(isset($options['action'])) {
-    $action = $options['action'];
-} else {
-    $action = "xyz";
-}
-
-if(isset($options['f'])) {
-    $file = $options['f'];
-} elseif(isset($options['file'])) {
-    $file = $options['file'];
-} else {
-    $file = "notexists.csv";
-}
-
-try {
-    if ($action == "plus") {
-        include 'Classes/Addition.php';
-        $classOne = new Addition($file);
-    } elseif ($action == "minus") {
-        include 'Classes/Subtraction.php';
-        $classTwo = new Subtraction($file, "minus");
-        $classTwo->start();
-    } elseif ($action == "multiply") {
-        include 'Classes/Multiplication.php';
-        $classThree = new Multiplication();
-        $classThree->setFile($file);
-        $classThree->execute();
-    } elseif ($action == "division") {
-        include 'Classes/Division.php';
-        $classFouyr = new Division($file);
-    } else {
-        throw new \Exception("Wrong action is selected");
+    public function __construct(string $action, string $file)
+    {
+        $this->action = $action;
+        $this->file = $file;
     }
-} catch (\Exception $exception) {}
+
+    public function execute(): void
+    {
+        $this->processFile();
+        $this->saveResult();
+        $this->saveLog();
+    }
+
+    private function processFile(): void
+    {
+        $handle = fopen($this->file, 'r');
+        while (($data = fgetcsv($handle, 1000, ';')) !== false) {
+            $a = (int)$data[0];
+            $b = (int)$data[1];
+            $result = $this->calculate($a, $b);
+
+            if ($result > 0) {
+                $this->results[] = '$a;$b;$result';
+            } else {
+                $this->logs[] = 'Numbers $a and $b are wrong';
+            }
+        }
+        fclose($handle);
+    }
+
+    private function calculate(int $a, int $b): ?float
+    {
+        return match ($this->action) {
+            'plus' => $a + $b,
+            'minus' => $a - $b,
+            'multiply' => $a * $b,
+            'division' => $b !== 0 ? $a / $b : null,
+            default => null
+        };
+    }
+
+    private function saveResult(): void
+    {
+        file_put_contents($this->resultFile, implode('\r\n', $this->results) . '\r\n');
+    }
+
+    private function saveLog(): void
+    {
+        if (!empty($this->logs)) {
+            file_put_contents($this->logFile, implode('\r\n', $this->logs) . '\r\n');
+        }
+    }
+}
+
+$options = getopt('', ['action:', 'file:']);
+$action = $options['action'];
+$file = $options['file'];
+
+$devTest = new DevTest($action, $file);
+$devTest->execute();
