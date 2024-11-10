@@ -4,8 +4,8 @@ class DevTest
 {
     private string $action;
     private string $file;
-    private string $logFile = 'log.txt';
-    private string $resultFile = 'result.csv';
+    private string $logFile;
+    private string $resultFile;
     private array $results = [];
     private array $logs = [];
 
@@ -13,6 +13,14 @@ class DevTest
     {
         $this->action = $action;
         $this->file = $file;
+        
+        $timestamp = time();
+        $filename = pathinfo($file, PATHINFO_FILENAME);
+        $logDirectory = 'Logs';
+        $resultDirectory = 'Results';
+
+        $this->logFile = sprintf('%s/%s-%s-%s.txt', $logDirectory, $timestamp, $filename, $action);
+        $this->resultFile = sprintf('%s/%s-%s-%s.csv', $resultDirectory, $timestamp, $filename, $action);
     }
 
     public function execute(): void
@@ -31,9 +39,9 @@ class DevTest
             $result = $this->calculate($a, $b);
 
             if ($result > 0) {
-                $this->results[] = '$a;$b;$result';
+                $this->results[] = "$a;$b;$result";
             } else {
-                $this->logs[] = 'Numbers $a and $b are wrong';
+                $this->logs[] = "Numbers $a and $b are wrong";
             }
         }
         fclose($handle);
@@ -52,13 +60,13 @@ class DevTest
 
     private function saveResult(): void
     {
-        file_put_contents($this->resultFile, implode('\r\n', $this->results) . '\r\n');
+        file_put_contents($this->resultFile, implode("\r\n", $this->results) . "\r\n");
     }
 
     private function saveLog(): void
     {
         if (!empty($this->logs)) {
-            file_put_contents($this->logFile, implode('\r\n', $this->logs) . '\r\n');
+            file_put_contents($this->logFile, implode("\r\n", $this->logs) . "\r\n");
         }
     }
 }
